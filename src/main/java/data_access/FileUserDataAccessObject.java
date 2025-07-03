@@ -20,14 +20,15 @@ import use_case.signup.SignupUserDataAccessInterface;
  * DAO for user data implemented using a File to persist the data.
  */
 public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
-                                                 LoginUserDataAccessInterface,
-                                                 ChangePasswordUserDataAccessInterface {
+        LoginUserDataAccessInterface,
+        ChangePasswordUserDataAccessInterface {
 
     private static final String HEADER = "username,password";
 
     private final File csvFile;
     private final Map<String, Integer> headers = new LinkedHashMap<>();
     private final Map<String, User> accounts = new HashMap<>();
+    private String currentUser = null;
 
     public FileUserDataAccessObject(String csvPath, UserFactory userFactory) throws IOException {
 
@@ -37,14 +38,13 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
 
         if (csvFile.length() == 0) {
             save();
-        }
-        else {
+        } else {
 
             try (BufferedReader reader = new BufferedReader(new FileReader(csvFile))) {
                 final String header = reader.readLine();
 
                 if (!header.equals(HEADER)) {
-                    throw new RuntimeException(String.format("header should be%n: %s%but was:%n%s", HEADER, header));
+                    throw new RuntimeException(String.format("header should be:%n%s%n but was:%n%s", HEADER, header));
                 }
 
                 String row;
@@ -60,9 +60,7 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
     }
 
     private void save() {
-        final BufferedWriter writer;
-        try {
-            writer = new BufferedWriter(new FileWriter(csvFile));
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
             writer.write(String.join(",", headers.keySet()));
             writer.newLine();
 
@@ -72,11 +70,7 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
                 writer.write(line);
                 writer.newLine();
             }
-
-            writer.close();
-
-        }
-        catch (IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
@@ -99,8 +93,18 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface,
 
     @Override
     public void changePassword(User user) {
-        // Replace the User object in the map
         accounts.put(user.getName(), user);
         save();
     }
+
+    @Override
+    public void setCurrentUser(String username) {
+        this.currentUser = username;
+    }
+
+    @Override
+    public String getCurrentUser() {
+        return this.currentUser;
+    }
+
 }

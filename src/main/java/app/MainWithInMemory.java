@@ -55,3 +55,4 @@ public class MainWithInMemory {
         application.setVisible(true);
     }
 }
+
