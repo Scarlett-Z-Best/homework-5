@@ -1,12 +1,12 @@
 package app;
 
 import java.awt.CardLayout;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
-import data_access.InMemoryUserDataAccessObject;  // ✅ 修改导包
-import entity.CommonUserFactory;
+import data_access.InMemoryUserDataAccessObject;
 import interface_adapter.ViewManagerModel;
 import interface_adapter.logged_in.LoggedInViewModel;
 import interface_adapter.login.LoginViewModel;
@@ -16,8 +16,16 @@ import view.LoginView;
 import view.SignupView;
 import view.ViewManager;
 
+/**
+ * Entry point for the application using in-memory user storage.
+ */
 public class MainWithInMemory {
 
+    /**
+     * Launches the application UI with in-memory data access.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         final JFrame application = new JFrame("Login Example");
         application.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -33,7 +41,6 @@ public class MainWithInMemory {
         final LoggedInViewModel loggedInViewModel = new LoggedInViewModel();
         final SignupViewModel signupViewModel = new SignupViewModel();
 
-        // ✅ 修改为使用内存 DAO
         final InMemoryUserDataAccessObject userDataAccessObject = new InMemoryUserDataAccessObject();
 
         final SignupView signupView = SignupUseCaseFactory.create(viewManagerModel, loginViewModel,
@@ -55,4 +62,3 @@ public class MainWithInMemory {
         application.setVisible(true);
     }
 }
-
