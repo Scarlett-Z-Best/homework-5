@@ -92,5 +92,5 @@ public class SignupInteractorTest {
         SignupInputBoundary interactor = new SignupInteractor(userRepository, failurePresenter, new CommonUserFactory());
         interactor.execute(inputData);
     }
-}
+
 }
